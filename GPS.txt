@@ -1,0 +1,43 @@
+#include <TinyGPS++.h>
+#include <SoftwareSerial.h>
+
+
+//The pins that the GPS is connected to.
+static const int GPSDataIn = 51;
+static const int GPSDataOut = 53;
+static const uint32_t GPSBaud = 9600;
+
+//Create a TinyGPS Object
+TinyGPSPlus gps;
+
+/Serial connection to GPS Device
+SoftwareSerial ss(GPSDataIn,GPSDataOut);
+
+void setup() {
+	
+	//Initilization
+	Serial.begin(115200);
+	ss.begin(GPSBaud);
+}
+
+void loop () {
+
+double latitude;
+double longitude;
+double speed;
+
+	//While data is still being read
+	while(ss.available > 0){
+		if(gps.encode(ss.read()) {
+				latitude = getLatitude();
+				longitude = getLongitude();
+				speed = getSpeed();
+				sendData(latitude,longitude,speed);
+		}	
+	}
+}
+
+void sendData(double in_latitude, double in_longitude, double in_speed) {
+
+
+}
