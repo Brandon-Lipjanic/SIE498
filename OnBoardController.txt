@@ -1,0 +1,78 @@
+#include <TinyGPS++.h>
+#include <SoftwareSerial.h>
+#include <Servo.h>
+
+//The pin mapping for the GPS
+static const int GPSDataIn = 51;
+static const int GPSDataOut = 53;
+static const uint32_t GPSBaud = 9600;
+
+//The pin mapping for the servos
+static const int sterringServoIn = -1;
+static const int throttleServoIn = -1;
+
+//Create a TinyGPS Object
+TinyGPSPlus gps;
+
+//Create a Servo Object
+Servo steeringServo;
+Servo throttleServo;
+
+//Serial connection to GPS Device
+SoftwareSerial ss(GPSDataIn,GPSDataOut);
+
+void setup() {
+
+	//Initilization
+	Serial.begin(115200);
+	ss.begin(GPSBaud);
+	steeringServo.attach(steeringServoIn);
+	throttleServo.attach(throttleServoIn);
+	
+}
+
+void loop() {
+
+	double latitude;
+	double longitude; 
+	int launchSignal = 0;
+	
+}
+
+//Functions to control the two servos responsible for controlling EMILY.
+//The servos operate in a range of 0-1, 0 being full left, 1 full right
+
+void turnFullRight() {
+	steeringServo.write(0.75);
+	throttleServo.write(1);
+}
+
+void turnFullLeft() {
+	steeringServo.write(0.25);
+	throttleServo.write(1);
+}
+
+void goStraightFull() {
+	steeringServo.write(0.5);
+	throttleServo.write(1);
+}
+
+void goStraightPartial() {
+	steeringServo.write(0.5);
+	throttleServo.write(0.5);
+}
+
+void turnPartialRight() {
+	steeringServo.write(0.6);
+	throttleServo.write(1);
+}
+
+void turnPartialLeft() {
+	steeringServo.write(0.4);
+	throttleServo.write(1);
+}
+
+void stop() {
+	steeringServo.write(0.5);
+	throttleServo.write(0);
+}
