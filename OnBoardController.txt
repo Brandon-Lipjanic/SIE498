@@ -37,6 +37,16 @@ void loop() {
 	double longitude; 
 	int launchSignal = 0;
 	
+	//Search for the target
+	
+	//Calculate GPS Position of Target
+	
+	//Send Launch Signal
+	
+	//Navigate
+	
+	//Send Done Signal
+	
 }
 
 //Functions to control the two servos responsible for controlling EMILY.
