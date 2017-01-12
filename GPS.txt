@@ -1,8 +1,7 @@
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 
-
-//The pins that the GPS is connected to.
+//The pins mapping for all the modules
 static const int GPSDataIn = 51;
 static const int GPSDataOut = 53;
 static const uint32_t GPSBaud = 9600;
@@ -10,7 +9,7 @@ static const uint32_t GPSBaud = 9600;
 //Create a TinyGPS Object
 TinyGPSPlus gps;
 
-/Serial connection to GPS Device
+//Serial connection to GPS Device
 SoftwareSerial ss(GPSDataIn,GPSDataOut);
 
 void setup() {
@@ -24,20 +23,34 @@ void loop () {
 
 double latitude;
 double longitude;
-double speed;
+int launchSignal = 0;	
+	
+	//Keep checking if the launchSignal is set high, do nothing while its low.
+	while(launchSignal == 0) {
+		
+		launchSignal = getLaunchSignal();
+	
+	}
 
 	//While data is still being read
 	while(ss.available > 0){
 		if(gps.encode(ss.read()) {
-				latitude = getLatitude();
-				longitude = getLongitude();
-				speed = getSpeed();
-				sendData(latitude,longitude,speed);
+			if(gps.location.isValid()) {
+				latitude = gps.location.lat();
+				longitude = gps.location.lng();
+				sendData(latitude,longitude);
+			}
 		}	
 	}
 }
 
-void sendData(double in_latitude, double in_longitude, double in_speed) {
 
+//Send data to the main ardunio via the TX-Module
+void sendData(double in_latitude, double in_longitude) {
+
+}
+
+//Recieve data from the main ardunio via the RX-Module
+int getLaunchSignal() {
 
 }
