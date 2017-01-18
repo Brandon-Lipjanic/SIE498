@@ -60,14 +60,14 @@ void sendData(double in_latitude, double in_longitude) {
 	
 	vw_send((uint8_t*)in_latitude,strlen(in_latitude));
 	vw_wait_tx(); //Wait for the message to be clear.
-	digitalWrite(78,1); //Set the write pin high
+	digitalWrite(78,1); //Set the write pin high for debugging
 	
 	delay(100); //Wait 100ms for the signal.
-	digitalWrite(78,0); //Set the write pin low
+	digitalWrite(78,0); //Set the write pin low for deubgging
 	
 	vw_send((uint8_t*)in_longitude,strlen(in_longitude));
 	vw_wait_tx(); //Wait fot the message to be clear.
-	digitalWrite(78,1); //Set the write pin high
+	digitalWrite(78,1); //Set the write pin high for debugging 
 	
 	delay(100); //Wait 100ms for the signal;
 }

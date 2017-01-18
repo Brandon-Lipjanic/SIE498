@@ -1,6 +1,7 @@
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
 #include <Servo.h>
+#include <VirtualWire.h>
 
 //The pin mapping for the GPS
 static const int GPSDataIn = 51;
@@ -11,6 +12,8 @@ static const uint32_t GPSBaud = 9600;
 static const int sterringServoIn = -1;
 static const int throttleServoIn = -1;
 
+//The pin mapping for the RX 
+static const int rxDataIn = 78;
 //Create a TinyGPS Object
 TinyGPSPlus gps;
 
@@ -23,15 +26,23 @@ SoftwareSerial ss(GPSDataIn,GPSDataOut);
 
 void setup() {
 
-	//Initilization
+	//Initilization of GPS
 	Serial.begin(115200);
 	ss.begin(GPSBaud);
+	
+	//Initilization of Servo
 	steeringServo.attach(steeringServoIn);
 	throttleServo.attach(throttleServoIn);
 	
+	//Initilization of RX
+	vw_set_ptt_inverted(true);
+	vw_set_rx_pin(78);
+	vw_setup(4000); //Bits per second
+	vw_rx_start();
 }
 
 void loop() {
+	
 
 	double latitude;
 	double longitude; 
@@ -41,12 +52,37 @@ void loop() {
 	
 	//Calculate GPS Position of Target
 	
-	//Send Launch Signal
-	
 	//Navigate
 	
-	//Send Done Signal
+	//Get GPS location 
+
+	//Finished
+}
+
+//Function used to recieve lat data from the EMILY
+double getLatitudeFromEMILY() {
+	double latitude = 0.0;
+	uint8_t buf[VW_MAX_MESSAGE_LEN];
+	uint8_t buflen = VW_MAX_MESSAGE_LEN;
 	
+	if(vw_get_message(buf,&buflen)) {
+		latitude = buf;
+	}
+	
+	return latitude;
+}
+
+//Function used to recieve long data from the EMILY
+double getLongitudeFromEMILY() {
+	double longitude = 0.0;
+	uint8_t buf[VW_MAX_MESSAGE_LEN];
+	uint8_t buflen = VW_MAX_MESSAGE_LEN;
+	
+	if(vw_get_message(buf,&buflen)) {
+		longitude = buf;
+	}
+	
+	return longitude;
 }
 
 //Functions to control the two servos responsible for controlling EMILY.
