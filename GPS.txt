@@ -1,9 +1,11 @@
 #include <TinyGPS++.h>
 #include <SoftwareSerial.h>
+#include <VirtualWire.h>
 
 //The pins mapping for all the modules
 static const int GPSDataIn = 51;
 static const int GPSDataOut = 53;
+static const int TXDataOut = 78;
 static const uint32_t GPSBaud = 9600;
 
 //Create a TinyGPS Object
@@ -14,9 +16,19 @@ SoftwareSerial ss(GPSDataIn,GPSDataOut);
 
 void setup() {
 	
-	//Initilization
+	//Initilization of GPS
 	Serial.begin(115200);
 	ss.begin(GPSBaud);
+	
+	//Initilization of TX
+	const char *lat_signal = "0";
+	const char *long_signal = "0";
+	uint8_t buf [VW_MAX_MESSAGE_LEN];
+	uint8_t buflen = VW_MAX_MESSAGE_LEN;
+	pinMode(78,OUTPUT);
+	vw_set_ptt_inverted(true);
+	vw_set_tx_pin(78);
+	vw_setup(4000);
 }
 
 void loop () {
@@ -24,13 +36,7 @@ void loop () {
 double latitude;
 double longitude;
 int launchSignal = 0;	
-	
-	//Keep checking if the launchSignal is set high, do nothing while its low.
-	while(launchSignal == 0) {
-		
-		launchSignal = getLaunchSignal();
-	
-	}
+
 
 	//While data is still being read
 	while(ss.available > 0){
@@ -48,9 +54,21 @@ int launchSignal = 0;
 //Send data to the main ardunio via the TX-Module
 void sendData(double in_latitude, double in_longitude) {
 
+	//The data to be sent to the EARL arduino.
+	lat_signal = in_latitude;
+	long_signal = in_longitude;
+	
+	vw_send((uint8_t*)in_latitude,strlen(in_latitude));
+	vw_wait_tx(); //Wait for the message to be clear.
+	digitalWrite(78,1); //Set the write pin high
+	
+	delay(100); //Wait 100ms for the signal.
+	digitalWrite(78,0); //Set the write pin low
+	
+	vw_send((uint8_t*)in_longitude,strlen(in_longitude));
+	vw_wait_tx(); //Wait fot the message to be clear.
+	digitalWrite(78,1); //Set the write pin high
+	
+	delay(100); //Wait 100ms for the signal;
 }
 
-//Recieve data from the main ardunio via the RX-Module
-int getLaunchSignal() {
-
-}
