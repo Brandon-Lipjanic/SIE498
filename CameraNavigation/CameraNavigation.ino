@@ -12,6 +12,9 @@ static const int alarmSystemIn = 9;
 static const int doorLatch = 2;
 static const int overRideButton = 5;
 static const int overrideButton = 13;
+static const int rightLED = 11;
+static const int leftLED = 12;
+static const int straightLED = 13;
 
 int buttonState = 0;
 const int sentenceSize = 80;
@@ -67,12 +70,12 @@ void loop() {
   double longitude; 
   double target_angle;
   double current_angle;
-  int target_x;
-  int target_y;
+  int target_x=0;
+  int target_y=0;
   int prev_x;
   int prev_y;
-  int humanSignature = 2;
-  int redSignature = 1;
+  int humanSignature = 1 ;
+  int redSignature = 2;
 
   char field[20];
   
@@ -91,67 +94,94 @@ void loop() {
     //Waiting for person to be detected
     blocks = pixy.getBlocks();
     while(searching) {
+      //Serial.println("Searching");
       blocks = pixy.getBlocks();
       for(j = 0; j < blocks; j++) {
         if(pixy.blocks[j].signature == humanSignature) {
+          
+          
+          pixy.blocks[j].print();
           searching = 0;
+         
         }
+     
       }
+        
     }
 
      //Launch the Boat
-    launch();
+  //  launch();
     
     //give time for the boat to launch and get ready
-    delay(10000); 
+    delay(1000); 
   
       
       //Main navigation loop.
       do { 
-    
+    /*
           //Manual Override
           buttonState = digitalRead(overRideButton);
           if(buttonState == HIGH) {
               digitalWrite(overrideButton,HIGH);
               exit(0);
-          }  
+          }  */
 
              //Getting location of boat and person
              blocks = pixy.getBlocks();
              for(j = 0; j < blocks; j++) {
+              Serial.println("Looking");
+              delay(50);
                 //Human location
                 if(pixy.blocks[j].signature == humanSignature) {
                   target_x = pixy.blocks[j].x;
                   target_y = pixy.blocks[j].y;
+                  Serial.println("Found Target");
+                  Serial.println("Location Tar");
+                  Serial.println(target_x);
                 }
                 if(pixy.blocks[j].signature == redSignature) {
                   boat_x = pixy.blocks[j].x;
                   boat_y = pixy.blocks[j].y;
+                  Serial.println("Found EMILY");
+                  Serial.println("Location Boat");
+                  Serial.println(boat_x);
                 }
              }
 
+        while(dirCounter < 3) {
+
         //Going Straight
-        if(dirCounter == 0 || dirCounter == 1) {
+        if(boat_x == 0 || boat_y == 0 || target_x == 0 || target_y == 0 ) {
+          stopServo();
+          Serial.println("Stop");
+        }
+        else if(dirCounter == 0 || dirCounter == 1) {
+          
           goStraightSlow();
+          
         }
 
         //If the boat is left of where it should be turn right
         else if(boat_x < target_x) {
+          
+          Serial.println("Right");
           turnPartialRight();
+          
         }
 
         //If the boat is right of where it should be turn left.
-        else if(boat_x > target_x) {
+        else if (boat_x > target_x){
+          
+          Serial.println("left");
           turnPartialLeft();
-        }
-
-        else {
-          goStraightSlow();
+          
         }
         dirCounter++;
-        if(dirCounter == 3) {
-          dirCounter = 0;
-        }
+      
+       }
+       stopServo();
+
+        dirCounter = 0;
 
         
 
@@ -161,7 +191,7 @@ void loop() {
 
           
     
-      }while(abs((boat_x - target_x) > 20) && (abs(boat_y - target_y) > 20));
+      }while(abs((boat_x - target_x) > 3) && (abs(boat_y - target_y) > 35));
          
   }
   
@@ -180,8 +210,8 @@ void goStraightFull() {
 
 void goStraightSlow() {
   steeringServo.write(90);
-  throttleServo.write(20); 
-  delay(1000);
+  throttleServo.write(30); 
+  delay(500);
 }
 void goStraightMedium() {
   steeringServo.write(90);
@@ -191,8 +221,8 @@ void goStraightMedium() {
 
 
 void turnPartialRight() {
-  steeringServo.write(80);
-  throttleServo.write(20); 
+  steeringServo.write(70);
+  throttleServo.write(30); 
   delay(500);
 }
 
@@ -203,8 +233,8 @@ void turnFullRight() {
 }
 
 void turnPartialLeft() {
-  steeringServo.write(100);
-  throttleServo.write(20); 
+  steeringServo.write(110);
+  throttleServo.write(30); 
   delay(500);
 }
 
