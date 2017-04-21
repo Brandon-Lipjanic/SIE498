@@ -24,6 +24,8 @@ Servo throttleServo;
 
 //Serial connection to GPS Device
 SoftwareSerial gpsSerial(gpsRX, gpsTX);
+SoftwareSerial XBee(0,1);
+
 
 
 //Create a Pixy Object
@@ -33,6 +35,7 @@ void setup() {
 
   //Initilization of GPS
   Serial.begin(9600);
+  XBee.begin(9600);
   gpsSerial.begin(9600);
   
   pixy.init();
@@ -87,6 +90,8 @@ void loop() {
   int j=0;
   uint16_t blockSize;
   char buf[32];
+  char latCheck;
+  char longCheck;
 
   //go straight for 2 seconds to get a reading of where we are at.
   goStraightSlow();
@@ -132,14 +137,22 @@ void loop() {
           }
 
           //get target values
+         lat_target = XBee.read();
+         lon_target = XBee.read();
+        while(lat_target < 0) {
+          lat_target = atof(XBee.read());
+        }
 
-          
+        while(lon_target > 0)
+        {
+          lon_target = atof(XBee.read());
+        }
 
 
 
           
     
-      }while(abs((lat_curr - lat_target) > 5) && (abs(lon_curr - lon_target) > 5));
+      }while(abs((lat_curr - lat_target) > 0.0001) && (abs(lon_curr - lon_target) > 0.0001));
          
   }
   

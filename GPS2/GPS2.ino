@@ -1,6 +1,8 @@
 #include <SoftwareSerial.h>
+#include <String.h>
 
-SoftwareSerial gpsSerial(10, 11); // RX, TX (TX not used)
+SoftwareSerial gpsSerial(10, 11); // RX, TX (TX not used) green wire, purple wire
+SoftwareSerial XBee(2, 3 );  // RX, TX
 const int sentenceSize = 80;
 
 char sentence[sentenceSize];
@@ -9,6 +11,7 @@ void setup()
 {
   Serial.begin(9600);
   gpsSerial.begin(9600);
+   XBee.begin(9600);
 }
 
 void loop()
@@ -16,6 +19,7 @@ void loop()
   static int i = 0;
   if (gpsSerial.available())
   {
+   
     char ch = gpsSerial.read();
     if (ch != '\n' && i < sentenceSize)
     {
@@ -26,6 +30,7 @@ void loop()
     {
      sentence[i] = '\0';
      i = 0;
+    
      displayGPS();
     }
   }
@@ -35,22 +40,21 @@ void displayGPS()
 {
   char field[20];
   getField(field, 0);
+
   if (strcmp(field, "$GPRMC") == 0)
   {
-    Serial.print("Lat: ");
     getField(field, 3);  // number
-    Serial.print(field);
-    getField(field, 4); // N/S
-    Serial.print(field);
+    Serial.println(field);
+    XBee.write(field);
+
     
-    Serial.print(" Long: ");
+    
     getField(field, 5);  // number
-    Serial.print(field);
-    getField(field, 6);  // E/W
     Serial.println(field);
-    getField(field,7);
-    Serial.print(" Speed: ");
-    Serial.println(field);
+    XBee.write(field);                 
+ 
+
+    //delay(50);
   }
 }
 
