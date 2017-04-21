@@ -11,8 +11,6 @@ static const int throttleServoIn = 7;
 static const int alarmSystemIn = 9;
 static const int doorLatch = 2;
 static const int overRideButton = 5;
-static const int gpsRX = 10;
-static const int gpsTX = 11;
 static const int overrideButton = 13;
 
 int buttonState = 0;
@@ -24,8 +22,7 @@ Servo steeringServo;
 Servo throttleServo;
 
 //Serial connection to GPS Device
-SoftwareSerial gpsSerial(gpsRX, gpsTX);
-SoftwareSerial XBee(0,1);
+
 
 
 
@@ -36,8 +33,6 @@ void setup() {
 
   //Initilization of GPS
   Serial.begin(9600);
-  XBee.begin(9600);
-  gpsSerial.begin(9600);
   
   pixy.init();
   
