@@ -130,6 +130,8 @@ void goStraightSlow() {
   steeringServo.write(90);
   throttleServo.write(30); 
   delay(500);
+    steeringServo.write(90);
+  throttleServo.write(0); 
 }
 void goStraightMedium() {
   steeringServo.write(90);
@@ -140,8 +142,10 @@ void goStraightMedium() {
 
 void turnPartialRight() {
   steeringServo.write(70);
-  throttleServo.write(30); 
+  throttleServo.write(35); 
   delay(500);
+    steeringServo.write(90);
+  throttleServo.write(0); 
 }
 
 void turnFullRight() {
@@ -154,11 +158,13 @@ void turnPartialLeft() {
   steeringServo.write(110);
   throttleServo.write(30); 
   delay(500);
+    steeringServo.write(90);
+  throttleServo.write(0); 
 }
 
 void turnFullLeft() {
   steeringServo.write(115);
-  throttleServo.write(45); 
+  throttleServo.write(30); 
   delay(1000);
 }
 
