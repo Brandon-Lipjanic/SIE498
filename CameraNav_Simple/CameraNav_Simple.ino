@@ -94,7 +94,12 @@ void loop()
           stopServo();
           Serial.println("Stop");
         }
-        else if(boat_x == target_x) {
+        
+        else if((abs((boat_x - target_x) < 10) && (abs(boat_y - target_y) < 10))){
+          stopServo();
+        }
+        
+        else if((abs((boat_x - target_x) < 35))) {
           
           goStraightSlow();
           
@@ -104,7 +109,7 @@ void loop()
         else if(boat_x < target_x) {
           
           Serial.println("Right");
-          turnPartialRight();
+          turnPartialLeft();
           
         }
 
@@ -112,7 +117,7 @@ void loop()
         else if (boat_x > target_x){
           
           Serial.println("left");
-          turnPartialLeft();
+          turnPartialRight();
           
         }
   }  
