@@ -55,73 +55,86 @@ void loop()
   int boat_y;
   uint16_t blocks;
   char buf[32]; 
+  int inc = 0 ;
   int humanSignature = 1;
   int redSignature = 2;
   
   // grab blocks!
-  blocks = pixy.getBlocks();
-  
-  // If there are detect blocks, print them!
-  if (blocks)
-  {
-    i++;
-    
-    // do this (print) every 50 frames because printing every
-    // frame would bog down the Arduino
-    if (i%50==0)
-    {
-      sprintf(buf, "Detected %d:\n", blocks);
-      Serial.print(buf);
-      for (j=0; j<blocks; j++)
-      {
-        if(pixy.blocks[j].signature == humanSignature) {
-                  target_x = pixy.blocks[j].x;
-                  target_y = pixy.blocks[j].y;
-                  Serial.println("Found Target");
-                  Serial.println("Location Tar");
-                  Serial.println(target_x);
+  while(1) {
+              blocks = pixy.getBlocks();
+              
+              // If there are detect blocks, print them!
+              if (blocks)
+              {
+                i++;
+                
+                // do this (print) every 50 frames because printing every
+                // frame would bog down the Arduino
+                if (i%50==0)
+                {
+                  sprintf(buf, "Detected %d:\n", blocks);
+                  Serial.print(buf);
+                  for (j=0; j<blocks; j++)
+                  {
+                    if(pixy.blocks[j].signature == humanSignature) {
+                              target_x = pixy.blocks[j].x;
+                              target_y = pixy.blocks[j].y;
+                              Serial.println("Found Target");
+                              Serial.println("Location Tar");
+                              Serial.println(target_x);
+                            }
+                            if(pixy.blocks[j].signature == redSignature) {
+                              boat_x = pixy.blocks[j].x;
+                              boat_y = pixy.blocks[j].y;
+                              Serial.println("Found EMILY");
+                              Serial.println("Location Boat");
+                              Serial.println(boat_x);
+                  }
                 }
-                if(pixy.blocks[j].signature == redSignature) {
-                  boat_x = pixy.blocks[j].x;
-                  boat_y = pixy.blocks[j].y;
-                  Serial.println("Found EMILY");
-                  Serial.println("Location Boat");
-                  Serial.println(boat_x);
-      }
-    }
+            
+                 if(boat_x == 0 || boat_y == 0 || target_x == 0 || target_y == 0 ) {
+                      stopServo();
+                      Serial.println("Stop");
+                    }
 
-     if(boat_x == 0 || boat_y == 0 || target_x == 0 || target_y == 0 ) {
-          stopServo();
-          Serial.println("Stop");
-        }
-        
-        else if((abs((boat_x - target_x) < 10) && (abs(boat_y - target_y) < 10))){
-          stopServo();
-        }
-        
-        else if((abs((boat_x - target_x) < 35))) {
-          
-          goStraightSlow();
-          
-        }
-
-        //If the boat is left of where it should be turn right
-        else if(boat_x < target_x) {
-          
-          Serial.println("Right");
-          turnPartialLeft();
-          
-        }
-
-        //If the boat is right of where it should be turn left.
-        else if (boat_x > target_x){
-          
-          Serial.println("left");
-          turnPartialRight();
-          
-        }
-  }  
-}
+                    else if(inc == 0 || inc == 1) {
+                      goStraightSlow();
+                    }
+                    
+                    else if((abs((boat_x - target_x) < 10) && (abs(boat_y - target_y) < 10))){
+                      stopServo();
+                      exit(0);
+                    }
+                    
+                    else if((abs((boat_x - target_x) < 35))) {
+                      
+                      goStraightSlow();
+                      
+                    }
+            
+                    //If the boat is left of where it should be turn right
+                    else if(boat_x < target_x) {
+                      
+                      Serial.println("Right");
+                      turnPartialLeft();
+                      
+                    }
+            
+                    //If the boat is right of where it should be turn left.
+                    else if (boat_x > target_x){
+                      
+                      Serial.println("left");
+                      turnPartialRight();
+                      
+                    }
+              }  
+            }
+            inc++;
+            if(inc == 3) {
+              inc = 0;
+            }
+            
+  }
 }
 
 
