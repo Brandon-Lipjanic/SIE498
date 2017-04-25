@@ -92,9 +92,11 @@ void loop() {
   int dirCounter = 0;
   
     //Waiting for person to be detected
-    blocks = pixy.getBlocks();
+  //  blocks = pixy.getBlocks();
+  /*
     while(searching) {
-      //Serial.println("Searching");
+      delay(1000);
+      Serial.println("Searching");
       blocks = pixy.getBlocks();
       for(j = 0; j < blocks; j++) {
         if(pixy.blocks[j].signature == humanSignature) {
@@ -108,16 +110,17 @@ void loop() {
       }
         
     }
-
+*/
      //Launch the Boat
   //  launch();
     
     //give time for the boat to launch and get ready
-    delay(1000); 
+    
   
       
       //Main navigation loop.
       do { 
+        delay(3000);
     /*
           //Manual Override
           buttonState = digitalRead(overRideButton);
@@ -127,58 +130,66 @@ void loop() {
           }  */
 
              //Getting location of boat and person
+             
              blocks = pixy.getBlocks();
-             for(j = 0; j < blocks; j++) {
-              Serial.println("Looking");
-              delay(50);
-                //Human location
-                if(pixy.blocks[j].signature == humanSignature) {
-                  target_x = pixy.blocks[j].x;
-                  target_y = pixy.blocks[j].y;
-                  Serial.println("Found Target");
-                  Serial.println("Location Tar");
-                  Serial.println(target_x);
-                }
-                if(pixy.blocks[j].signature == redSignature) {
-                  boat_x = pixy.blocks[j].x;
-                  boat_y = pixy.blocks[j].y;
-                  Serial.println("Found EMILY");
-                  Serial.println("Location Boat");
-                  Serial.println(boat_x);
-                }
-             }
 
-        while(dirCounter < 3) {
-
-        //Going Straight
-        if(boat_x == 0 || boat_y == 0 || target_x == 0 || target_y == 0 ) {
-          stopServo();
-          Serial.println("Stop");
-        }
-        else if(dirCounter == 0 || dirCounter == 1) {
-          
-          goStraightSlow();
-          
-        }
-
-        //If the boat is left of where it should be turn right
-        else if(boat_x < target_x) {
-          
-          Serial.println("Right");
-          turnPartialRight();
-          
-        }
-
-        //If the boat is right of where it should be turn left.
-        else if (boat_x > target_x){
-          
-          Serial.println("left");
-          turnPartialLeft();
-          
-        }
-        dirCounter++;
-      
-       }
+         if(blocks == 0)
+         {
+          Serial.println("Nothing FOund");
+         }
+              
+                         for(j = 0; j < blocks; j++) {
+                          Serial.println("Looking");
+                        //  delay(50);
+                            //Human location
+                            if(pixy.blocks[j].signature == humanSignature) {
+                              target_x = pixy.blocks[j].x;
+                              target_y = pixy.blocks[j].y;
+                              Serial.println("Found Target");
+                              Serial.println("Location Tar");
+                              Serial.println(target_x);
+                            }
+                            if(pixy.blocks[j].signature == redSignature) {
+                              boat_x = pixy.blocks[j].x;
+                              boat_y = pixy.blocks[j].y;
+                              Serial.println("Found EMILY");
+                              Serial.println("Location Boat");
+                              Serial.println(boat_x);
+                            }
+                         }
+            
+                    while(dirCounter < 3) {
+            
+                    //Going Straight
+                    if(boat_x == 0 || boat_y == 0 || target_x == 0 || target_y == 0 ) {
+                      stopServo();
+                      Serial.println("Stop");
+                    }
+                    else if(dirCounter == 0 || dirCounter == 1) {
+                      
+                      goStraightSlow();
+                      
+                    }
+            
+                    //If the boat is left of where it should be turn right
+                    else if(boat_x < target_x) {
+                      
+                      Serial.println("Right");
+                      turnPartialRight();
+                      
+                    }
+            
+                    //If the boat is right of where it should be turn left.
+                    else if (boat_x > target_x){
+                      
+                      Serial.println("left");
+                      turnPartialLeft();
+                      
+                    }
+                    dirCounter++;
+                  
+                   }
+             
        stopServo();
 
         dirCounter = 0;
@@ -191,7 +202,7 @@ void loop() {
 
           
     
-      }while(abs((boat_x - target_x) > 3) && (abs(boat_y - target_y) > 35));
+      }while(1);//while((abs((boat_x - target_x) > 3) && (abs(boat_y - target_y) > 35)) || boat_x == 0 );
          
   }
   
