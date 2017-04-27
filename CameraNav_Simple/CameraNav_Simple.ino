@@ -8,10 +8,11 @@
 //The pin mapping
 static const int steeringServoIn = 6;
 static const int throttleServoIn = 7;
+static const int beaconIn = 8;
 static const int alarmSystemIn = 9;
 static const int doorLatch = 2;
 static const int overRideButton = 5;
-static const int overrideButton = 13;
+static const int overRideLED = 13;
 static const int rightLED = 11;
 static const int leftLED = 12;
 static const int straightLED = 13;
@@ -37,8 +38,9 @@ void setup()
   steeringServo.attach(steeringServoIn);
   throttleServo.attach(throttleServoIn);
 
-    pinMode(overrideButton, OUTPUT);
+    pinMode(overRideLED, OUTPUT);
   pinMode(alarmSystemIn,OUTPUT);
+  pinMode(beaconIn,OUTPUT);
   pinMode(doorLatch,OUTPUT);
   pinMode(overRideButton, INPUT);
 
@@ -53,6 +55,8 @@ void loop()
   int target_y;
   int boat_x;
   int boat_y;
+  int go1 = 0;
+  int go2 = 0;
   uint16_t blocks;
   char buf[32]; 
   int inc = 0 ;
@@ -82,6 +86,7 @@ void loop()
                               Serial.println("Found Target");
                               Serial.println("Location Tar");
                               Serial.println(target_x);
+                              go1 = 1;
                             }
                             if(pixy.blocks[j].signature == redSignature) {
                               boat_x = pixy.blocks[j].x;
@@ -89,7 +94,13 @@ void loop()
                               Serial.println("Found EMILY");
                               Serial.println("Location Boat");
                               Serial.println(boat_x);
+                              go2 = 1;
                   }
+                }
+
+                if(go1 == 1 && go2 == 1) {
+                  launch();
+                  delay(3000);
                 }
             
                  if(boat_x == 0 || boat_y == 0 || target_x == 0 || target_y == 0 ) {
@@ -191,11 +202,12 @@ void turnFullLeft() {
 void stopServo() {
   steeringServo.write(90);
   throttleServo.write(0); 
-  delay(5000);
+  delay(1000);
 }
 
 void launch() {
-  digitalWrite(overrideButton, HIGH);
+  digitalWrite(overRideLED, HIGH);
+  digitalWrite(beaconIn,HIGH);
   digitalWrite(alarmSystemIn,HIGH);
   digitalWrite(doorLatch,HIGH);
   
