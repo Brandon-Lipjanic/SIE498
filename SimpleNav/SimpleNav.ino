@@ -120,7 +120,7 @@ void loop() {
       
       //Main navigation loop.
        
-        delay(15000);
+        delay(5000);
     /*
           //Manual Override
           buttonState = digitalRead(overRideButton);
@@ -142,7 +142,7 @@ void loop() {
             goStraightSlow();
             delay(2000);
             stopServo();
-            exit(0);
+            
             
   
       }
@@ -201,7 +201,7 @@ void stopServo() {
 }
 
 void launch() {
-  digitalWrite(overrideButton, HIGH);
+//  digitalWrite(beaconIn,HIGH);
   digitalWrite(alarmSystemIn,HIGH);
   digitalWrite(doorLatch,HIGH);
   

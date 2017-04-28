@@ -9,6 +9,7 @@
 static const int steeringServoIn = 6;
 static const int throttleServoIn = 7;
 static const int beaconIn = 8;
+static const int doorServoIn = 37;
 static const int alarmSystemIn = 9;
 static const int doorLatch = 2;
 static const int overRideButton = 5;
@@ -24,7 +25,7 @@ char sentence[sentenceSize];
 //Create a Servo Object
 Servo steeringServo;
 Servo throttleServo;
-
+Servo doorServo;
 // This is the main Pixy object 
 Pixy pixy;
 
@@ -37,6 +38,7 @@ void setup()
     //Initilization of Servo
   steeringServo.attach(steeringServoIn);
   throttleServo.attach(throttleServoIn);
+  doorServo.attach(doorServoIn);
 
     pinMode(overRideLED, OUTPUT);
   pinMode(alarmSystemIn,OUTPUT);
@@ -60,7 +62,7 @@ void loop()
   uint16_t blocks;
   char buf[32]; 
   int inc = 0 ;
-  int humanSignature = 1;
+  int humanSignature = 5;
   int redSignature = 2;
   
   // grab blocks!
@@ -206,10 +208,15 @@ void stopServo() {
 }
 
 void launch() {
-  digitalWrite(overRideLED, HIGH);
+ // digitalWrite(overRideLED, HIGH);
   digitalWrite(beaconIn,HIGH);
   digitalWrite(alarmSystemIn,HIGH);
   digitalWrite(doorLatch,HIGH);
+  doorServo.write(55);
+  delay(5000);
+  doorServo.write(10);
+    digitalWrite(beaconIn,LOW);
+  digitalWrite(alarmSystemIn,LOW);
   
 }
 

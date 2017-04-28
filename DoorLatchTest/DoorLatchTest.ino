@@ -4,7 +4,7 @@
 #include <Pixy.h>
 #include <math.h>
 
-static const int doorLatch = 2;
+static const int doorLatch = 37;
 
 void setup() {
   // put your setup code here, to run once:
