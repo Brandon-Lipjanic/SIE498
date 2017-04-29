@@ -119,8 +119,8 @@ void loop() {
   
       
       //Main navigation loop.
-      do { 
-        delay(3000);
+       
+        delay(5000);
     /*
           //Manual Override
           buttonState = digitalRead(overRideButton);
@@ -129,86 +129,23 @@ void loop() {
               exit(0);
           }  */
 
-             //Getting location of boat and person
-             
-             blocks = pixy.getBlocks();
-
-         if(blocks == 0)
-         {
-          Serial.println("Nothing FOund");
-         }
-              
-                         for(j = 0; j < blocks; j++) {
-                          Serial.println("Looking");
-                        //  delay(50);
-                            //Human location
-                            if(pixy.blocks[j].signature == humanSignature) {
-                              target_x = pixy.blocks[j].x;
-                              target_y = pixy.blocks[j].y;
-                              Serial.println("Found Target");
-                              Serial.println("Location Tar");
-                              Serial.println(target_x);
-                            }
-                            if(pixy.blocks[j].signature == redSignature) {
-                              boat_x = pixy.blocks[j].x;
-                              boat_y = pixy.blocks[j].y;
-                              Serial.println("Found EMILY");
-                              Serial.println("Location Boat");
-                              Serial.println(boat_x);
-                            }
-                         }
+            goStraightSlow();
+            delay(2000);
+            turnPartialRight();
             
-                    while(dirCounter < 3) {
+            turnPartialLeft();
             
-                    //Going Straight
-                    if(boat_x == 0 || boat_y == 0 || target_x == 0 || target_y == 0 ) {
-                      stopServo();
-                      Serial.println("Stop");
-                    }
-                    else if(dirCounter == 0 || dirCounter == 1) {
-                      
-                      goStraightSlow();
-                      
-                    }
+            turnPartialLeft();
+           
+            turnPartialRight();
+           
+            goStraightSlow();
+            delay(2000);
+            stopServo();
             
-                    //If the boat is left of where it should be turn right
-                    else if(boat_x < target_x) {
-                      
-                      Serial.println("Right");
-                      turnPartialRight();
-                      
-                    }
             
-                    //If the boat is right of where it should be turn left.
-                    else if (boat_x > target_x){
-                      
-                      Serial.println("left");
-                      turnPartialLeft();
-                      
-                    }
-                    dirCounter++;
-                  
-                   }
-             
-       stopServo();
-
-        dirCounter = 0;
-
-        
-
- 
-
-
-
-          
-    
-      }while(1);//while((abs((boat_x - target_x) > 3) && (abs(boat_y - target_y) > 35)) || boat_x == 0 );
-         
-  }
   
-  
-  
-
+      }
 
 //Functions to control the two servos responsible for controlling EMILY.
 //The servos operate in a range of 0-1, 0 being full left, 1 full right
@@ -222,7 +159,7 @@ void goStraightFull() {
 void goStraightSlow() {
   steeringServo.write(90);
   throttleServo.write(30); 
-  delay(500);
+  delay(700);
 }
 void goStraightMedium() {
   steeringServo.write(90);
@@ -234,7 +171,7 @@ void goStraightMedium() {
 void turnPartialRight() {
   steeringServo.write(70);
   throttleServo.write(30); 
-  delay(500);
+  delay(700);
 }
 
 void turnFullRight() {
@@ -246,7 +183,7 @@ void turnFullRight() {
 void turnPartialLeft() {
   steeringServo.write(110);
   throttleServo.write(30); 
-  delay(500);
+  delay(700);
 }
 
 void turnFullLeft() {
@@ -264,7 +201,7 @@ void stopServo() {
 }
 
 void launch() {
-  digitalWrite(overrideButton, HIGH);
+//  digitalWrite(beaconIn,HIGH);
   digitalWrite(alarmSystemIn,HIGH);
   digitalWrite(doorLatch,HIGH);
   
